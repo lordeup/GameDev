@@ -9,11 +9,14 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Scenes/SettingsMenu.unity
-    guid: 5a4bac3468e11ed4091c3cb508cfa2d2
-  - enabled: 1
     path: Assets/Scenes/LevelMenu.unity
     guid: cc1631ffc9e8783449baeba5b1ec4666
+  - enabled: 1
+    path: Assets/Scenes/Level1TaskMenu.unity
+    guid: b3da4c64c49bad748843352779b83283
+  - enabled: 1
+    path: Assets/Scenes/Level2TaskMenu.unity
+    guid: 13db7dd1047a0da439548fd8ca33324f
   - enabled: 1
     path: Assets/Scenes/PauseMenu.unity
     guid: 33eeded66eb765842a06996c8b3caade
@@ -24,9 +27,27 @@ EditorBuildSettings:
     path: Assets/Scenes/Winning.unity
     guid: 971a71c621b51dd4899ab8bc9e2f2d59
   - enabled: 1
-    path: Assets/Scenes/Level1.unity
+    path: Assets/Scenes/Level1.1.unity
     guid: 35fabf7e1829fc84a925bdfe4d2de5c3
   - enabled: 1
-    path: Assets/Scenes/Level2.unity
+    path: Assets/Scenes/Level1.2.unity
     guid: edb8ad7161caa2741b6311574afb07a1
+  - enabled: 1
+    path: Assets/Scenes/Level1.3.unity
+    guid: 24e0a09e2d16dd24d8aa15196b2bdacf
+  - enabled: 1
+    path: Assets/Scenes/Level1.4.unity
+    guid: 1d2dd26350ce5eb44bf8705ee10f019f
+  - enabled: 1
+    path: Assets/Scenes/Level2.1.unity
+    guid: 53e8030e397ff3c4da5ebc4b550143d0
+  - enabled: 1
+    path: Assets/Scenes/Level2.2.unity
+    guid: 616e2a284a78f0647b1fc499817e2390
+  - enabled: 1
+    path: Assets/Scenes/Level2.3.unity
+    guid: 596814f57588fa3459d03eba89f91b75
+  - enabled: 1
+    path: Assets/Scenes/Level2.4.unity
+    guid: c497d54ee99ca5d4bb6f9c73a72fd32c
   m_configObjects: {}

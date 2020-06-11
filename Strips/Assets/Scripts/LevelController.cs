@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,12 +18,22 @@ public class LevelController : MonoBehaviour
     SceneController _sceneController;
     bool _isUpdate;
 
+    const int _totalTaskNumber = 4;
+
     void Start()
     {
         _touchClick = gameObject.AddComponent<TouchClick>();
         _randomController = gameObject.AddComponent<RandomController>();
         _sceneController = gameObject.AddComponent<SceneController>();
         _isUpdate = true;
+
+        String value = GetRegexMatchValue(_sceneController.GetActiveScene().name);
+
+        if (value.Length > 2)
+        {
+            LevelNumberController.levelNumber = Int32.Parse(value[0].ToString());
+            LevelNumberController.taskNumber = Int32.Parse(value[value.Length - 1].ToString());
+        }
     }
 
     void Update()
@@ -31,7 +43,7 @@ public class LevelController : MonoBehaviour
             ChangeActive(lines.Count);
         }
 
-        if (HealthController.count == 0)
+        if (HealthController.count == 0 || TimerController.currentTime == 0f)
         {
             LevelLose();
         }
@@ -39,8 +51,27 @@ public class LevelController : MonoBehaviour
 
     void LevelWin()
     {
-        ScoreController.count += 10;
-        _sceneController.LoadSceneAfterWaiting("Winning");
+        int nextBuildIndex = _sceneController.GetActiveScene().buildIndex + 1;
+
+        if (nextBuildIndex < _sceneController.GetSceneCountInBuildSettings())
+        {
+            LevelMenuController.AddWinLevels(nextBuildIndex);
+        }
+
+        foreach (Image line in lines)
+        {
+            ChangeColorImage(line, Color.green);
+            ChangeEnabledImage(line, true);
+        }
+
+        if (LevelNumberController.taskNumber < _totalTaskNumber)
+        {
+            _sceneController.LoadNextSceneAfterWaiting();
+        }
+        else
+        {
+            _sceneController.LoadSceneAfterWaiting("Winning");
+        }
     }
 
     void LevelLose()
@@ -59,8 +90,8 @@ public class LevelController : MonoBehaviour
             _activeShape = hideShapes[randomNumber];
             
             _activeLine = lines[randomNumber];
-            _activeLine.enabled = true;
-            _activeLine.color = Color.red;
+            ChangeEnabledImage(_activeLine, true);
+            ChangeColorImage(_activeLine, Color.red);
         }
         else
         {
@@ -80,6 +111,16 @@ public class LevelController : MonoBehaviour
         }
     }
 
+    void ChangeEnabledImage(Image image, bool value)
+    {
+        image.enabled = value;
+    }
+
+    void ChangeColorImage(Image image, Color color)
+    {
+        image.color = color;
+    }
+
     void RotateImage(Image image)
     {
         image.transform.Rotate(0f, 0f, 90f);
@@ -93,7 +134,7 @@ public class LevelController : MonoBehaviour
         if (activeShapeRotation.z == imageRotation.z && _activeShape.sprite.name == image.sprite.name)
         {
             image.transform.localPosition = _activeShape.transform.localPosition;
-            _activeLine.enabled = false;
+            ChangeEnabledImage(_activeLine, false);
             image.transform.GetComponent<EventTrigger>().enabled = false;
             _isUpdate = true;
         }
@@ -101,5 +142,10 @@ public class LevelController : MonoBehaviour
         {
             --HealthController.count;
         }
+    }
+
+    String GetRegexMatchValue(string str)
+    {
+        return Regex.Match(str, @"[\d\.]+").Value;
     }
 }

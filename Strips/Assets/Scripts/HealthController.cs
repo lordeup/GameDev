@@ -7,16 +7,16 @@ public class HealthController : MonoBehaviour
 {
     public static int count;
 
-    TextMeshProUGUI health;
+    TextMeshProUGUI _health;
 
     void Start()
     {
         count = 3;
-        health = GetComponent<TextMeshProUGUI>();
+        _health = GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
     {
-        health.text = count.ToString();
+        _health.text = count.ToString();
     }
 }
