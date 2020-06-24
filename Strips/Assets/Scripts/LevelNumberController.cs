@@ -9,20 +9,15 @@ public class LevelNumberController : MonoBehaviour
     public List<Image> taskPoints;
     public static int levelNumber = 0;
     public static int taskNumber = 0;
-    TextMeshProUGUI _level;
-
-    void Start()
-    {
-        _level = GetComponent<TextMeshProUGUI>();
-    }
+    public TextMeshProUGUI level;
 
     void Update()
     {
-        _level.text = "Level " + levelNumber.ToString();
+        level.text = levelNumber.ToString();
 
         for(int i = 0; i < taskNumber; ++i)
         {
-            taskPoints[i].color = Color.red;
+           Utils.ChangeColorImage(taskPoints[i], new Color32(79, 189, 170, 255));
         }
     }
 }

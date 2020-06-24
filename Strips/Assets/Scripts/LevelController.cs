@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +9,12 @@ public class LevelController : MonoBehaviour
 {
     public List<Image> hideShapes;
     public List<Image> lines;
+
+    public List<Image> shapes;
+    public Color colorShape;
+
+    public GameObject winningPanel;
+    public GameObject losingPanel;
 
     Image _activeLine;
     Image _activeShape;
@@ -20,19 +25,30 @@ public class LevelController : MonoBehaviour
 
     const int _totalTaskNumber = 4;
 
+    Color32 _lineColor;
+
+    bool _isLose;
+
     void Start()
     {
         _touchClick = gameObject.AddComponent<TouchClick>();
         _randomController = gameObject.AddComponent<RandomController>();
         _sceneController = gameObject.AddComponent<SceneController>();
         _isUpdate = true;
+        _isLose = false;
+        _lineColor = new Color32(232, 14, 12, 255);
 
-        String value = GetRegexMatchValue(_sceneController.GetActiveScene().name);
+        String value = Utils.GetRegexMatchValue(_sceneController.GetActiveScene().name);
 
         if (value.Length > 2)
         {
             LevelNumberController.levelNumber = Int32.Parse(value[0].ToString());
             LevelNumberController.taskNumber = Int32.Parse(value[value.Length - 1].ToString());
+        }
+
+        foreach(Image shape in shapes)
+        {
+            Utils.ChangeColorImage(shape, colorShape);
         }
     }
 
@@ -43,7 +59,7 @@ public class LevelController : MonoBehaviour
             ChangeActive(lines.Count);
         }
 
-        if (HealthController.count == 0 || TimerController.currentTime == 0f)
+        if (!_isLose && (HealthController.count == 0 || TimerController.currentTime == 0f))
         {
             LevelLose();
         }
@@ -58,25 +74,22 @@ public class LevelController : MonoBehaviour
             LevelMenuController.AddWinLevels(nextBuildIndex);
         }
 
-        foreach (Image line in lines)
-        {
-            ChangeColorImage(line, Color.green);
-            ChangeEnabledImage(line, true);
-        }
-
         if (LevelNumberController.taskNumber < _totalTaskNumber)
         {
             _sceneController.LoadNextSceneAfterWaiting();
         }
         else
         {
-            _sceneController.LoadSceneAfterWaiting("Winning");
+            _sceneController.panel = winningPanel;
+            _sceneController.StopGame();
         }
     }
 
     void LevelLose()
     {
-        _sceneController.LoadSceneAfterWaiting("Losing");
+        _sceneController.panel = losingPanel;
+        _sceneController.StopGame();
+        _isLose = true;
     }
 
     void ChangeActive(int maxNumber)
@@ -90,8 +103,8 @@ public class LevelController : MonoBehaviour
             _activeShape = hideShapes[randomNumber];
             
             _activeLine = lines[randomNumber];
-            ChangeEnabledImage(_activeLine, true);
-            ChangeColorImage(_activeLine, Color.red);
+            Utils.ChangeEnabledImage(_activeLine, true);
+            Utils.ChangeColorImage(_activeLine, _lineColor);
         }
         else
         {
@@ -107,23 +120,8 @@ public class LevelController : MonoBehaviour
         }
         else
         {
-            RotateImage(image);
+            Utils.RotateImage(image);
         }
-    }
-
-    void ChangeEnabledImage(Image image, bool value)
-    {
-        image.enabled = value;
-    }
-
-    void ChangeColorImage(Image image, Color color)
-    {
-        image.color = color;
-    }
-
-    void RotateImage(Image image)
-    {
-        image.transform.Rotate(0f, 0f, 90f);
     }
 
     void DragImage(Image image)
@@ -134,7 +132,7 @@ public class LevelController : MonoBehaviour
         if (activeShapeRotation.z == imageRotation.z && _activeShape.sprite.name == image.sprite.name)
         {
             image.transform.localPosition = _activeShape.transform.localPosition;
-            ChangeEnabledImage(_activeLine, false);
+            Utils.ChangeEnabledImage(_activeLine, false);
             image.transform.GetComponent<EventTrigger>().enabled = false;
             _isUpdate = true;
         }
@@ -142,10 +140,5 @@ public class LevelController : MonoBehaviour
         {
             --HealthController.count;
         }
-    }
-
-    String GetRegexMatchValue(string str)
-    {
-        return Regex.Match(str, @"[\d\.]+").Value;
     }
 }

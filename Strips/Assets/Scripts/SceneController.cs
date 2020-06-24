@@ -5,29 +5,45 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    static Stack<int> loadedScenes = new Stack<int>();
+    public GameObject panel;
+
+    public void StopGame()
+    {
+        StoppingTime();
+        panel.SetActive(true);
+    }
+
+    public void ContinueGame()
+    {
+        StartingTime();
+        panel.SetActive(false);
+    }
+
+    public void LoadCurrentScene()
+    {
+        LoadScene(GetActiveScene().name);
+    }
+
+    public void LoadNextScene()
+    {
+        StartingTime();
+        int nextScene = GetActiveScene().buildIndex + 1;
+
+        if (nextScene < GetSceneCountInBuildSettings())
+        {
+            SceneManager.LoadScene(nextScene);
+        }
+    }
 
     public void LoadScene(string name)
     {
-        AddSceneToLoadedScenes(GetActiveScene().buildIndex);
+        StartingTime();
         SceneManager.LoadScene(name);
-    }
-
-    public void LoadSceneAfterWaiting(string name)
-    {
-        StartCoroutine(LoadSceneAfterDelay(name));
     }
 
     public void LoadNextSceneAfterWaiting()
     {
-        AddSceneToLoadedScenes(GetActiveScene().buildIndex);
         StartCoroutine(LoadNextSceneAfterDelay());
-    }
-
-    IEnumerator LoadSceneAfterDelay(string name)
-    {
-        yield return new WaitForSeconds(0.5f);
-        LoadScene(name);
     }
 
     IEnumerator LoadNextSceneAfterDelay()
@@ -36,66 +52,9 @@ public class SceneController : MonoBehaviour
         LoadNextScene();
     }
 
-    public void LoadPreviousScene()
-    {
-        if (loadedScenes.Count > 0)
-        {
-            SceneManager.LoadScene(loadedScenes.Pop());
-        }
-    }
-
-    public void LoadNextScene()
-    {
-        if (loadedScenes.Count > 0)
-        {
-            int nextScene = loadedScenes.Peek() + 1;
-
-            if (nextScene < GetSceneCountInBuildSettings())
-            {
-                SceneManager.LoadScene(nextScene);
-            }
-        }
-    }
-
-    public void PauseGame(string name)
-    {
-        StoppingTime();
-
-        int buildIndexLevel = GetActiveScene().buildIndex;
-        SceneManager.LoadSceneAsync(name, LoadSceneMode.Additive);
-
-        AddSceneToLoadedScenes(GetSceneByName(name).buildIndex);
-        AddSceneToLoadedScenes(buildIndexLevel);
-    }
-
-    IEnumerator UnloadScene(int buildIndex)
-    {
-        yield return null;
-        SceneManager.UnloadSceneAsync(buildIndex);
-    }
-
-    public void ContinueGame()
-    {
-        if (loadedScenes.Count > 1)
-        {
-            StartCoroutine(UnloadScene(loadedScenes.Pop()));
-            SceneManager.UnloadSceneAsync(loadedScenes.Pop());
-        }
-    }
-
     public Scene GetActiveScene()
     {
         return SceneManager.GetActiveScene();
-    }
-
-    public Scene GetSceneByName(string name)
-    {
-        return SceneManager.GetSceneByName(name);
-    }
-
-    public int GetBuildIndexByScenePath(string name)
-    {
-        return SceneUtility.GetBuildIndexByScenePath(name);
     }
 
     public int GetSceneCountInBuildSettings()
@@ -103,7 +62,12 @@ public class SceneController : MonoBehaviour
         return SceneManager.sceneCountInBuildSettings;
     }
 
-    public void StartingTime()
+    public int GetBuildIndexByScenePath(string name)
+    {
+        return SceneUtility.GetBuildIndexByScenePath(name);
+    }
+
+    void StartingTime()
     {
         Time.timeScale = 1f;
     }
@@ -111,10 +75,5 @@ public class SceneController : MonoBehaviour
     void StoppingTime()
     {
         Time.timeScale = 0f;
-    }
-
-    void AddSceneToLoadedScenes(int buildIndex)
-    {
-        loadedScenes.Push(buildIndex);
     }
 }

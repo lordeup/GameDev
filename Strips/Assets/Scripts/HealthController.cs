@@ -1,22 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 
 public class HealthController : MonoBehaviour
 {
+    public List<Image> hearts;
     public static int count;
-
-    TextMeshProUGUI _health;
 
     void Start()
     {
-        count = 3;
-        _health = GetComponent<TextMeshProUGUI>();
+        count = hearts.Count;
     }
 
     void Update()
     {
-        _health.text = count.ToString();
+        if (count < hearts.Count)
+        {
+            int index = hearts.Count - count;
+            Utils.ChangeColorImage(hearts[index == hearts.Count ? 0 : index], Color.white);
+        }
     }
 }

@@ -269,7 +269,5 @@ Logs/
 Library/
 Temp/
 obj/
-TextMesh Pro.meta
-TextMesh Pro/
 
 # End of https://www.gitignore.io/api/vim,linux,unity,macos,windows,dotnetcore,intellij+all,visualstudiocode
