@@ -244,7 +244,7 @@ PrefabInstance:
     - target: {fileID: 8094157983810682898, guid: 62ed09a6310bf144495cd4dc1bd6053d,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
-      value: LevelMenu
+      value: Level1.1
       objectReference: {fileID: 0}
     - target: {fileID: 8094157983810682899, guid: 62ed09a6310bf144495cd4dc1bd6053d,
         type: 3}
